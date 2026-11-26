@@ -5,7 +5,8 @@ namespace Application.Interfaces.Service;
 
 public interface IMachineToolService
 {
-    public Task<List<MachineToolResponse>> GetMachineToolsAsync();
-    public Task<MachineTool> EquipSensorAsync(int sensorId, int machineToolId);
-    public Task<MachineTool> UnequipSensorAsync(int sensorId, int machineToolId);
+    public Task<IEnumerable<MachineToolResponse>> GetMachineToolsAsync();
+    public Task<MachineToolResponse> GetMachineToolAsync(int? id);
+    public Task<int> CreateMachineToolAsync(CreateMachineTool dto);
+    
 }

@@ -11,16 +11,25 @@ public class MachineToolRepository : IMachineToolRepository
     {
         _context = context;
     }
-    public async Task<MachineTool> GetMachineToolAsync(int id) 
+    public async Task<MachineTool?> GetMachineToolAsync(int? id) 
         => await _context.MachineTool
-            .Where(x => x.Id == id)
-            .FirstOrDefaultAsync();
+            .Include(x => x.Sensors)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+    public async Task<MachineTool?> GetMachineToolByNameAsync(string name)
+        => await _context.MachineTool
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x=> x.Name == name);
 
     public async Task<List<MachineTool>> GetMachineToolsAsync() => 
         await _context.MachineTool
             .AsNoTracking()
             .ToListAsync();
 
-    public async Task SaveMachineTool(MachineTool machineTool) 
-        => await _context.SaveChangesAsync();
+    public async Task SaveMachineTool(MachineTool machineTool)
+    {
+        await _context.MachineTool.AddAsync(machineTool);
+        await _context.SaveChangesAsync();
+    }
+        
 }

@@ -11,7 +11,8 @@ public class MachineToolConfiguration : IEntityTypeConfiguration<MachineTool>
         builder.HasKey(x => x.Id);
         
         builder.HasMany(m => m.Sensors)
-            .WithOne(x => x.MachineTool);
+            .WithOne(x => x.MachineTool)
+            .HasForeignKey(x => x.MachineToolId);
         
         builder.ComplexProperty(x => x.Activity);
     }

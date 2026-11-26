@@ -1,8 +1,8 @@
 using Application.Interfaces.Repository;
 using Application.Interfaces.Service;
-using Core.Models;
 using Application.Extensions;
 using Application.DTOs.MachineTool;
+using Core.Models;
 
 namespace Application.Services;
 
@@ -13,21 +13,50 @@ public class MachineToolService : IMachineToolService
     {
         _repository = repository;
     }
-    public Task<MachineTool> EquipSensorAsync(int sensorId, int machineToolId)
+
+    public async Task<int> CreateMachineToolAsync(CreateMachineTool dto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var existedMachineTools = await _repository.GetMachineToolsAsync();
+            if(existedMachineTools.Select(x => x.Name).Contains(dto.Name))
+            {
+                throw new Exception($"Machine tool {dto.Name} already exists");
+            }
+            MachineTool machineTool = new MachineTool(){Name = dto.Name, MachineToolTypeId=dto.MachineToolTypeId};
+            await _repository.SaveMachineTool(machineTool);
+            var result = await _repository.GetMachineToolByNameAsync(dto.Name);
+            return result.Id;
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
-    public async Task<List<MachineToolResponse>> GetMachineToolsAsync()
+    public async Task<MachineToolResponse> GetMachineToolAsync(int? id)
     {
-        var machineTools = await _repository.GetMachineToolsAsync();
-        var machineToolsResponse = machineTools.Select(x => x.ToResponseDto()).ToList();
-        return machineToolsResponse;
-    } 
-       
+        if(id == null) throw new Exception("Machinetool id cannot be null");
+        try
+        {
+            var machineTool = await _repository.GetMachineToolAsync(id);
+            if(machineTool != null)
+                return machineTool.ToResponseDto();
+            else throw new Exception($"Machinetool with id: {id} does not exists");
+        }catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
 
-    public Task<MachineTool> UnequipSensorAsync(int sensorId, int machineToolId)
+    public async Task<IEnumerable<MachineToolResponse>> GetMachineToolsAsync()
     {
-        throw new NotImplementedException();
+        try{
+            var machineTools = await _repository.GetMachineToolsAsync();
+            return machineTools.Select(x => x.ToResponseDto());
+        }catch(Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }

@@ -4,8 +4,9 @@ namespace Application.Interfaces.Repository;
 
 public interface IMachineToolRepository
 {
-    public Task<MachineTool> GetMachineToolAsync(int id);
-    public Task<List<MachineTool>> GetMachineToolsAsync();
-    public Task SaveMachineTool(MachineTool machineTool);
+    Task<MachineTool?> GetMachineToolAsync(int? id);
+    Task<List<MachineTool>> GetMachineToolsAsync();
+    Task SaveMachineTool(MachineTool machineTool);
+    Task<MachineTool?> GetMachineToolByNameAsync(string name);
     
 }

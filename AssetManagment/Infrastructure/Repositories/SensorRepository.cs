@@ -13,7 +13,6 @@ public class SensorRepository : ISensorRepository
     }
     public async Task<Sensor?> GetSensorAsync(int Id)
         => await _context.Sensor
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == Id);
         
 
@@ -24,6 +23,7 @@ public class SensorRepository : ISensorRepository
 
     public async Task SaveSensorAsync(Sensor sensor)
     {
+        await _context.Sensor.AddAsync(sensor);
         await _context.SaveChangesAsync();
     }
 
@@ -34,6 +34,13 @@ public class SensorRepository : ISensorRepository
             .ToListAsync();
 
     public async Task AddSensorMovmentAsync(SensorMovement sensorMovement)
-        => await _context.SensorMovements
-            .AddAsync(sensorMovement);
+    {
+        await _context.SensorMovements.AddAsync(sensorMovement);
+        await _context.SaveChangesAsync();
+    }
+    
+    public async Task<Sensor?> GetSensorByNameAsync(string name)
+        => await _context.Sensor
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Name == name);
 }

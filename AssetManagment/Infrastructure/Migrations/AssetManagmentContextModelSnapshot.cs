@@ -40,8 +40,6 @@ namespace Infrastructure.Migrations
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Activity", "Core.Models.MachineTool.Activity#Activity", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<bool>("IsActive")
                                 .HasColumnType("boolean");
 
@@ -74,7 +72,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MachineToolType");
+                    b.ToTable("MachineToolTypes");
                 });
 
             modelBuilder.Entity("Core.Models.MeasureType", b =>
@@ -91,7 +89,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MeasureType");
+                    b.ToTable("MeasureTypes");
                 });
 
             modelBuilder.Entity("Core.Models.Sensor", b =>
@@ -102,7 +100,7 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("MachineToolId")
+                    b.Property<int?>("MachineToolId")
                         .HasColumnType("integer");
 
                     b.Property<int>("MeasureTypeId")
@@ -114,8 +112,6 @@ namespace Infrastructure.Migrations
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Activity", "Core.Models.Sensor.Activity#Activity", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<bool>("IsActive")
                                 .HasColumnType("boolean");
 
@@ -178,9 +174,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Core.Models.MachineTool", "MachineTool")
                         .WithMany("Sensors")
-                        .HasForeignKey("MachineToolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MachineToolId");
 
                     b.HasOne("Core.Models.MeasureType", "MeasureType")
                         .WithMany("Sensors")
